@@ -16,7 +16,6 @@ points_total = 0
 class Ball:
     def __init__(self, x=40, y=450):
         """ Конструктор класса ball
-        Args:
         x - начальное положение мяча по горизонтали
         y - начальное положение мяча по вертикали
         """
@@ -36,6 +35,9 @@ class Ball:
         self.live = 30
 
     def set_coords(self):
+        """
+        Задает координаты мяча
+        """
         canv.coords(
             self.id,
             self.x - self.r,
@@ -95,12 +97,18 @@ class Ball:
 
 class Gun:
     def __init__(self):
+        """
+        Конструктор класса Gun
+        """
         self.id = canv.create_line(20, 450, 50, 420, width=7)
         self.f2_power = 10
         self.f2_on = 0
         self.an = 1
 
     def fire2_start(self, event):
+        """
+        Оружие готово к выстрелу, активируется при нажатии кнопки мыши
+        """
         self.f2_on = 1
 
     def fire2_end(self, event):
@@ -132,6 +140,10 @@ class Gun:
                     )
 
     def power_up(self):
+        """
+        Зарядка оружия. От длительности нажатия кнопки зависит начальная
+        скорость полета снаряда
+        """
         if self.f2_on:
             if self.f2_power < 100:
                 self.f2_power += 1
@@ -142,6 +154,9 @@ class Gun:
 
 class Target:
     def __init__(self):
+        """
+        Конструктор класса Target
+        """
         self.color = 'red'
         self.r = rnd(2, 50)
         self.y = rnd(300, 550)
@@ -158,12 +173,18 @@ class Target:
         canv.coords(self.id, self.x - self.r, self.y - self.r, self.x + self.r,
                     self.y + self.r)
         canv.itemconfig(self.id, fill=self.color)
+        self.live = 1
 
     def hit(self):
         """Попадание шарика в цель."""
         canv.coords(self.id, -10, -10, -10, -10)
 
     def move_target(self):
+        """
+        Переместить мишень по прошествии единицы времени. Метод описывает
+        перемещение мишени за один кадр перерисовки. То есть, обновляет
+        значения self.x и self.y с учетом скоростей self.vx и self.vy.
+        """
         if self.live == 1:
             canv.delete(self.id)
             self.x += self.vx
@@ -198,11 +219,17 @@ balls = []
 
 
 def points_on_screen():
+    """
+    Функция выводит количество полученных игроком очков на экран
+    """
     global points_total, k
     canv.itemconfig(k, text=points_total)
 
 
 def new_game(event=''):
+    """
+    Функция запускает новую игру
+    """
     global Gun, t1, t2, screen1, balls, bullet, points_total
     t1.new_target()
     t2.new_target()
@@ -213,8 +240,6 @@ def new_game(event=''):
     canv.bind('<Motion>', g1.targeting)
 
     z = 0.03
-    t1.live = 1
-    t2.live = 1
     while t1.live or balls or t2.live:
         t1.move_target()
         t2.move_target()
